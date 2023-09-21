@@ -28,7 +28,7 @@ namespace Claims.BLL
                 DatabaseResponse database = await client.CreateDatabaseIfNotExistsAsync(databaseName);
                 await database.Database.CreateContainerIfNotExistsAsync(containerName, "/id");
 
-                return new ClaimCosmosDbService(client, databaseName, containerName);
+                return new CosmosDbService<Claim>(client, databaseName, containerName);
             }
 
             static async Task<ICosmosDbService<Cover>> InitializeCoverCosmosClientInstanceAsync(IConfigurationSection configurationSection)
@@ -43,7 +43,7 @@ namespace Claims.BLL
                 DatabaseResponse database = await client.CreateDatabaseIfNotExistsAsync(databaseName);
                 await database.Database.CreateContainerIfNotExistsAsync(containerName, "/id");
 
-                return new CoverCosmosDbService(client, databaseName, containerName);
+                return new CosmosDbService<Cover>(client, databaseName, containerName);
             }
         }
     }

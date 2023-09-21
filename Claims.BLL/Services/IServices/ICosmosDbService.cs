@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Claims.BLL.Services.IServices
 {
-    public interface ICosmosDbService<T> where T : class, new()
+    public interface ICosmosDbService<T>
     {
         Task<IEnumerable<T>> GetItemsAsync();
         Task<T> GetItemAsync(string id);
