@@ -1,6 +1,5 @@
-using Claims.Auditing;
+using Claims.BLL.Services.IServices;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.Cosmos;
 
 namespace Claims.Controllers
 {
@@ -10,20 +9,20 @@ namespace Claims.Controllers
     {
         
         private readonly ILogger<ClaimsController> _logger;
-        private readonly CosmosDbService _cosmosDbService;
-        private readonly Auditer _auditer;
+        private readonly ICosmosDbService<Claim> _cosmosDbService;
+        private readonly IAuditerService _auditer;
 
-        public ClaimsController(ILogger<ClaimsController> logger, CosmosDbService cosmosDbService, AuditContext auditContext)
+        public ClaimsController(ILogger<ClaimsController> logger, ICosmosDbService<Claim> cosmosDbService, IAuditerService auditer)
         {
             _logger = logger;
             _cosmosDbService = cosmosDbService;
-            _auditer = new Auditer(auditContext);
+            _auditer = auditer;
         }
 
         [HttpGet]
         public Task<IEnumerable<Claim>> GetAsync()
         {
-            return _cosmosDbService.GetClaimsAsync();
+            return _cosmosDbService.GetItemsAsync();
         }
 
         [HttpPost]
@@ -45,56 +44,8 @@ namespace Claims.Controllers
         [HttpGet("{id}")]
         public Task<Claim> GetAsync(string id)
         {
-            return _cosmosDbService.GetClaimAsync(id);
+            return _cosmosDbService.GetItemAsync(id);
         }
     }
 
-    public class CosmosDbService
-    {
-        private readonly Container _container;
-
-        public CosmosDbService(CosmosClient dbClient,
-            string databaseName,
-            string containerName)
-        {
-            if (dbClient == null) throw new ArgumentNullException(nameof(dbClient));
-            _container = dbClient.GetContainer(databaseName, containerName);
-        }
-
-        public async Task<IEnumerable<Claim>> GetClaimsAsync()
-        {
-            var query = _container.GetItemQueryIterator<Claim>(new QueryDefinition("SELECT * FROM c"));
-            var results = new List<Claim>();
-            while (query.HasMoreResults)
-            {
-                var response = await query.ReadNextAsync();
-
-                results.AddRange(response.ToList());
-            }
-            return results;
-        }
-
-        public async Task<Claim> GetClaimAsync(string id)
-        {
-            try
-            {
-                var response = await _container.ReadItemAsync<Claim>(id, new PartitionKey(id));
-                return response.Resource;
-            }
-            catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
-            {
-                return null;
-            }
-        }
-
-        public Task AddItemAsync(Claim item)
-        {
-            return _container.CreateItemAsync(item, new PartitionKey(item.Id));
-        }
-
-        public Task DeleteItemAsync(string id)
-        {
-            return _container.DeleteItemAsync<Claim>(id, new PartitionKey(id));
-        }
-    }
 }

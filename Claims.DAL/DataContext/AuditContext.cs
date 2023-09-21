@@ -1,6 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Claims.DAL.Entities;
+using Microsoft.EntityFrameworkCore;
 
-namespace Claims.Auditing
+namespace Claims.DAL.DataContext
 {
     public class AuditContext : DbContext
     {
