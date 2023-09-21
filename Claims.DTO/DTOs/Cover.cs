@@ -13,7 +13,7 @@ public class Cover
     [JsonProperty(PropertyName = "endDate")]
     public DateOnly EndDate { get; set; }
     
-    [JsonProperty(PropertyName = "claimType")]
+    [JsonProperty(PropertyName = "coverType")]
     public CoverType Type { get; set; }
 
     [JsonProperty(PropertyName = "premium")]

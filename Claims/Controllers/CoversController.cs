@@ -30,7 +30,7 @@ public class CoversController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Cover>>> GetAsync()
     {
-        return Ok(_cosmosDbService.GetItemsAsync());
+        return Ok(await _cosmosDbService.GetItemsAsync());
     }
 
     [HttpGet("{id}")]
@@ -38,7 +38,7 @@ public class CoversController : ControllerBase
     {
         try
         {
-            return Ok(_cosmosDbService.GetItemAsync(id));
+            return Ok(await _cosmosDbService.GetItemAsync(id));
         }
         catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
         {
