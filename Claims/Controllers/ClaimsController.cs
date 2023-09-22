@@ -22,9 +22,10 @@ namespace Claims.Controllers
         }
 
         [HttpGet]
-        public Task<IEnumerable<Claim>> GetAsync()
+        public async Task<IEnumerable<Claim>> GetAsync()
         {
-            return _claimCosmosDbService.GetItemsAsync();
+            var result = await _claimCosmosDbService.GetItemsAsync();
+            return result;
         }
 
         [HttpPost]
