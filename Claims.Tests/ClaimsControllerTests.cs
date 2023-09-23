@@ -1,20 +1,13 @@
-﻿using Claims.Controllers;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Azure.Cosmos.Serialization.HybridRow;
-using System.Reflection;
+﻿using Microsoft.AspNetCore.Mvc.Testing;
 using FluentAssertions;
 using Xunit;
-using Microsoft.AspNetCore.Http;
 using System.Net;
 using Newtonsoft.Json;
 using Claims.BLL.Services.IServices;
 using Claims.Tests.ServicesTest;
-using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Json;
-using Claims.BLL.Services;
 
 namespace Claims.Tests
 {

@@ -14,7 +14,10 @@ namespace Claims.BLL
             services.AddSingleton(InitializeClaimCosmosClientInstanceAsync(Configuration.GetSection("CosmosDb")).GetAwaiter().GetResult());
             services.AddSingleton(InitializeCoverCosmosClientInstanceAsync(Configuration.GetSection("CosmosDb")).GetAwaiter().GetResult());
 
+            services.AddSingleton<ICoversService, CoversService>();
+
             services.AddScoped<IAuditerService, AuditerService>();
+            
 
             static async Task<ICosmosDbService<Claim>> InitializeClaimCosmosClientInstanceAsync(IConfigurationSection configurationSection)
             {

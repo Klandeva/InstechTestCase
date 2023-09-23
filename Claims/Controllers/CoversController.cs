@@ -1,8 +1,6 @@
-using Claims.API.Utilities;
 using Claims.BLL.Services.IServices;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Cosmos;
-using System.Security.Claims;
 
 namespace Claims.Controllers;
 
@@ -13,19 +11,22 @@ public class CoversController : ControllerBase
     private readonly ILogger<CoversController> _logger;
     private readonly IAuditerService _auditer;
     private readonly ICosmosDbService<Cover> _cosmosDbService;
+    private readonly ICoversService _coversService;
 
-    public CoversController(ICosmosDbService<Cover> cosmosDbService, IAuditerService auditer, ILogger<CoversController> logger)
+    public CoversController(ICosmosDbService<Cover> cosmosDbService, IAuditerService auditer, ICoversService coversService, ILogger<CoversController> logger)
     {
         _logger = logger;
         _auditer = auditer;
+        _coversService = coversService;
         _cosmosDbService = cosmosDbService;
     }
-    
-    //[HttpPost]
-    //public async Task<ActionResult> ComputePremiumAsync(DateOnly startDate, DateOnly endDate, CoverType coverType)
-    //{
-    //    return Ok(Utilities.ComputePremium(startDate, endDate, coverType));
-    //}
+
+    [Route("Premium")]
+    [HttpPost]
+    public async Task<ActionResult> ComputePremiumAsync(DateOnly startDate, DateOnly endDate, CoverType coverType)
+    {
+        return Ok(_coversService.ComputePremium(startDate, endDate, coverType));
+    }
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Cover>>> GetAsync()
@@ -50,7 +51,7 @@ public class CoversController : ControllerBase
     public async Task<ActionResult> CreateAsync(Cover cover)
     {
         cover.Id = Guid.NewGuid().ToString();
-        cover.Premium = Utilities.ComputePremium(cover.StartDate, cover.EndDate, cover.Type);
+        cover.Premium = _coversService.ComputePremium(cover.StartDate, cover.EndDate, cover.Type);
         await _cosmosDbService.AddItemAsync(cover);
         _auditer.AuditCover(cover.Id, "POST");
         return Ok(cover);
