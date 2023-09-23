@@ -5,12 +5,14 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -95,8 +97,9 @@ namespace Claims.Tests
         }
 
         // StartDate cannot be in the Past
-        [Fact]
-        public async Task Add_Cover_ValidateStartDate()
+        [InlineData("StartDate cannot be in the past")]
+        [Theory]
+        public async Task Add_Cover_ValidateStartDate(string error)
         {
             Cover cover = new Cover()
             {
@@ -108,11 +111,15 @@ namespace Claims.Tests
             };
             var response = await _httpClient.PostAsJsonAsync("/Covers", cover);
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+            var responseJObject = JObject.Parse(response.Content.ReadAsStringAsync().GetAwaiter().GetResult());
+            var actualError = (string)((JObject)responseJObject["errors"])["StartDate"].First;
+            actualError.Should().Be(error);
         }
 
-        // total insurance period cannot exceed 1 year
-        [Fact]
-        public async Task Add_Cover_ValidateTotalInsurancePeriod()
+        [InlineData("Total insurance period cannot exceed 1 year")]
+        [Theory]
+        public async Task Add_Cover_ValidateTotalInsurancePeriod(string error)
         {
             Cover cover = new Cover()
             {
@@ -124,6 +131,10 @@ namespace Claims.Tests
             };
             var response = await _httpClient.PostAsJsonAsync("/Covers", cover);
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+            var responseJObject = JObject.Parse(response.Content.ReadAsStringAsync().GetAwaiter().GetResult());
+            var actualError = (string)((JObject)responseJObject["errors"])["EndDate"].First;
+            actualError.Should().Be(error);
         }
 
         [Fact]

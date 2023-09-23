@@ -22,10 +22,10 @@ namespace Claims.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Claim>> GetAsync()
+        public async Task<ActionResult<IEnumerable<Claim>>> GetAsync()
         {
             var result = await _claimCosmosDbService.GetItemsAsync();
-            return result;
+            return Ok(result);
         }
 
         [HttpPost]
@@ -44,16 +44,18 @@ namespace Claims.Controllers
         }
 
         [HttpDelete("{id}")]
-        public Task DeleteAsync(string id)
+        public async Task<ActionResult> DeleteAsync(string id)
         {
             _auditer.AuditClaim(id, "DELETE");
-            return _claimCosmosDbService.DeleteItemAsync(id);
+            await _claimCosmosDbService.DeleteItemAsync(id);
+            return Ok();
         }
 
         [HttpGet("{id}")]
-        public Task<Claim> GetAsync(string id)
+        public async Task<ActionResult<Claim>> GetAsync(string id)
         {
-            return _claimCosmosDbService.GetItemAsync(id);
+            var result = await _claimCosmosDbService.GetItemAsync(id);
+            return Ok(result);
         }
     }
 

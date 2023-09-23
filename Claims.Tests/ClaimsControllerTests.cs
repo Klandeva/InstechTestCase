@@ -8,6 +8,8 @@ using Claims.Tests.ServicesTest;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Json;
+using Newtonsoft.Json.Linq;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Claims.Tests
 {
@@ -91,8 +93,9 @@ namespace Claims.Tests
         }
 
         // DamageCost exceed 100.000
-        [Fact]
-        public async Task Add_Claim_ValidateDamageCostProperty()
+        [InlineData("The field DamageCost must be between 0 and 100000.")]
+        [Theory]
+        public async Task Add_Claim_ValidateDamageCostProperty(string error)
         {
             Claim claim = new Claim()
             {
@@ -106,11 +109,16 @@ namespace Claims.Tests
 
             var response = await _httpClient.PostAsJsonAsync("/Claims", claim);
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+            var responseJObject = JObject.Parse(response.Content.ReadAsStringAsync().GetAwaiter().GetResult());
+            var actualError = (string)((JObject)responseJObject["errors"])["DamageCost"].First;
+            actualError.Should().Be(error);
         }
 
         // Created date is not within the period of the related Cover
-        [Fact]
-        public async Task Add_Claim_ValidateCreatedDateProperty()
+        [InlineData("Created date must be within the period of the related Cover")]
+        [Theory]
+        public async Task Add_Claim_ValidateCreatedDateProperty(string error)
         {
             Claim claim = new Claim()
             {
@@ -118,12 +126,15 @@ namespace Claims.Tests
                 CoverId = "7531",
                 Name = "ClaimTest",
                 Created = new DateTime(2024,7,31,12,21,0),
-                DamageCost = 100001,
+                DamageCost = 100000,
                 Type = ClaimType.Fire
             };
 
             var response = await _httpClient.PostAsJsonAsync("/Claims", claim);
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+            var actualError = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+            actualError.Should().Be(error);
         }
 
         [Fact]
