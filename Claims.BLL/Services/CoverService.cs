@@ -2,7 +2,7 @@
 
 namespace Claims.BLL.Services
 {
-    public class CoversService : ICoversService
+    public class CoverService : ICoversService
     {
         public decimal ComputePremium(DateOnly startDate, DateOnly endDate, CoverType coverType)
         {

@@ -53,14 +53,14 @@ public class CoversController : ControllerBase
         cover.Id = Guid.NewGuid().ToString();
         cover.Premium = _coversService.ComputePremium(cover.StartDate, cover.EndDate, cover.Type);
         await _cosmosDbService.AddItemAsync(cover);
-        _auditer.AuditCover(cover.Id, "POST");
+        await _auditer.AuditCover(cover.Id, "POST");
         return Ok(cover);
     }
 
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteAsync(string id)
     {
-        _auditer.AuditCover(id, "DELETE");
+        await _auditer.AuditCover(id, "DELETE");
         await _cosmosDbService.DeleteItemAsync(id);
         return Ok();
     }
