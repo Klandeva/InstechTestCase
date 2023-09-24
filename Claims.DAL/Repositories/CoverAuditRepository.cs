@@ -6,7 +6,7 @@ namespace Claims.DAL.Repositories
 {
     public class CoverAuditRepository : GenericRepository<CoverAudit>, ICoverAuditRepository
     {
-        public CoverAuditRepository(AuditContext auditContext) : base(auditContext)
+        public CoverAuditRepository(IServiceProvider serviceProvider) : base(serviceProvider)
         {
         }
     }

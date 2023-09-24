@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 
 namespace Claims.BLL.Services
@@ -14,10 +15,16 @@ namespace Claims.BLL.Services
         private readonly IClaimAuditRepository _claimAuditRepository;
         private readonly ICoverAuditRepository _coverAuditRepository;
 
-        public AuditerService(IClaimAuditRepository claimAuditRepository, ICoverAuditRepository coverAuditRepository)
+        private readonly ChannelWriter<ClaimAudit> _claimAuditChannelWriter;
+        private readonly ChannelWriter<CoverAudit> _coverAuditChannelWriter;
+
+        public AuditerService(IClaimAuditRepository claimAuditRepository, ICoverAuditRepository coverAuditRepository, ChannelWriter<ClaimAudit> claimAuditChannelWriter, ChannelWriter<CoverAudit> coverAuditChannelWriter)
         {
             _claimAuditRepository = claimAuditRepository;
             _coverAuditRepository = coverAuditRepository;
+
+            _claimAuditChannelWriter = claimAuditChannelWriter;
+            _coverAuditChannelWriter = coverAuditChannelWriter;
         }
 
         public async Task AuditClaim(string id, string httpRequestType)
@@ -29,7 +36,7 @@ namespace Claims.BLL.Services
                 ClaimId = id
             };
 
-            await _claimAuditRepository.AddAsync(claimAudit);
+            await _claimAuditChannelWriter.WriteAsync(claimAudit);
         }
 
         public async Task AuditCover(string id, string httpRequestType)
@@ -41,7 +48,7 @@ namespace Claims.BLL.Services
                 CoverId = id
             };
 
-            await _coverAuditRepository.AddAsync(coverAudit);
+            await _coverAuditChannelWriter.WriteAsync(coverAudit);
         }
     }
 }

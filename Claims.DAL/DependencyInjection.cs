@@ -16,8 +16,8 @@ namespace Claims.DAL
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
 
-            services.AddScoped<IClaimAuditRepository, ClaimAuditRepository>();
-            services.AddScoped<ICoverAuditRepository, CoverAuditRepository>();
+            services.AddSingleton<IClaimAuditRepository, ClaimAuditRepository>();
+            services.AddSingleton<ICoverAuditRepository, CoverAuditRepository>();
         }
     }
 }

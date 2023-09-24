@@ -1,9 +1,11 @@
 ﻿using Claims.BLL.Services;
 using Claims.BLL.Services.IServices;
+using Claims.DAL.Entities;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Configuration;
+using System.Threading.Channels;
 
 namespace Claims.BLL
 {
@@ -17,7 +19,19 @@ namespace Claims.BLL
             services.AddSingleton<ICoversService, CoversService>();
 
             services.AddScoped<IAuditerService, AuditerService>();
-            
+
+            // Claim Channel
+            services.AddSingleton(Channel.CreateUnbounded<ClaimAudit>(new UnboundedChannelOptions() { SingleReader = true }));
+            services.AddSingleton(svc => svc.GetRequiredService<Channel<ClaimAudit>>().Reader);
+            services.AddSingleton(svc => svc.GetRequiredService<Channel<ClaimAudit>>().Writer);
+
+            // Cover Channel
+            services.AddSingleton(Channel.CreateUnbounded<CoverAudit>(new UnboundedChannelOptions() { SingleReader = true }));
+            services.AddSingleton(svc => svc.GetRequiredService<Channel<CoverAudit>>().Reader);
+            services.AddSingleton(svc => svc.GetRequiredService<Channel<CoverAudit>>().Writer);
+
+            services.AddHostedService<ClaimAuditReaderService>();
+            services.AddHostedService<CoverAuditReaderService>();
 
             static async Task<ICosmosDbService<Claim>> InitializeClaimCosmosClientInstanceAsync(IConfigurationSection configurationSection)
             {

@@ -7,7 +7,7 @@ namespace Claims.DAL.Repositories
 {
     public class ClaimAuditRepository : GenericRepository<ClaimAudit>, IClaimAuditRepository
     {
-        public ClaimAuditRepository(AuditContext auditContext) : base(auditContext) 
+        public ClaimAuditRepository(IServiceProvider serviceProvider) : base(serviceProvider) 
         { 
         }
     }
