@@ -20,6 +20,12 @@ namespace Claims.BLL.Services
             _channelReader = channelReader;
             _claimAuditRepository = claimAuditRepository;
         }
+
+        /// <summary>
+        /// Get ClaimAudit object from Channel queue and insert it into ClaimAudits SQLServer db table
+        /// </summary>
+        /// <param name="stoppingToken"></param>
+        /// <returns></returns>
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             while (!stoppingToken.IsCancellationRequested)

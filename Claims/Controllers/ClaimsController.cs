@@ -21,6 +21,10 @@ namespace Claims.Controllers
             _auditer = auditer;
         }
 
+        /// <summary>
+        /// Get whole list of claims
+        /// </summary>
+        /// <returns>List of claims</returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Claim>>> GetAsync()
         {
@@ -28,6 +32,11 @@ namespace Claims.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Create new claim with the given properties
+        /// </summary>
+        /// <param name="claim"></param>
+        /// <returns>created claim</returns>
         [HttpPost]
         public async Task<ActionResult> CreateAsync(Claim claim)
         {
@@ -43,6 +52,11 @@ namespace Claims.Controllers
             return Ok(claim);
         }
 
+        /// <summary>
+        /// Delete claim per id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteAsync(string id)
         {
@@ -51,6 +65,11 @@ namespace Claims.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Get claim per id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<Claim>> GetAsync(string id)
         {

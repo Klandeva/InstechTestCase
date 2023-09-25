@@ -26,7 +26,12 @@ namespace Claims.BLL.Services
             _claimAuditChannelWriter = claimAuditChannelWriter;
             _coverAuditChannelWriter = coverAuditChannelWriter;
         }
-
+        /// <summary>
+        /// Create AuditClaim object and put into Channel queue 
+        /// </summary>
+        /// <param name="id">Claim id</param>
+        /// <param name="httpRequestType">POST or DELETE</param>
+        /// <returns></returns>
         public async Task AuditClaim(string id, string httpRequestType)
         {
             var claimAudit = new ClaimAudit()
@@ -39,6 +44,12 @@ namespace Claims.BLL.Services
             await _claimAuditChannelWriter.WriteAsync(claimAudit);
         }
 
+        /// <summary>
+        /// Create AuditCover object and put into Channel queue
+        /// </summary>
+        /// <param name="id">Cover id</param>
+        /// <param name="httpRequestType">POST or DELETE</param>
+        /// <returns></returns>
         public async Task AuditCover(string id, string httpRequestType)
         {
             var coverAudit = new CoverAudit()

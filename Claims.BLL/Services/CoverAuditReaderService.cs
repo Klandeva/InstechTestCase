@@ -22,6 +22,7 @@ namespace Claims.BLL.Services
             _coverAuditRepository = coverAuditRepository;
         }
 
+        /// Get CoverAudit object from Channel queue and insert it into CoverAudits SQLServer db table
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             while (!stoppingToken.IsCancellationRequested)

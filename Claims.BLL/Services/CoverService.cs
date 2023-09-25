@@ -10,6 +10,8 @@ namespace Claims.BLL.Services
 
             int baseDayRate = 1250;
             decimal multiplier = 1.3m;
+
+            // Get specific multiplier per cover type
             switch (coverType)
             {
                 case CoverType.Yacht: multiplier = 1.1m; break;
@@ -20,6 +22,10 @@ namespace Claims.BLL.Services
             decimal premiumPerDay = baseDayRate * multiplier;
             int insuranceLength = endDate.DayNumber - startDate.DayNumber;
 
+            // Calculate premiums based of the insurance length
+            // insuranceLength < 30 => whole insurance period has the same premium per day
+            // insuranceLength > 30 and < 180 => first 30 days has the base premium per day, the remaining days has specific discount
+            // insuranceLength > 180 => first 30 days has the base premium per day, following 150 days has specific discount, the remaining days has additional discount
             switch (insuranceLength)
             {
                 case < 30:

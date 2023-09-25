@@ -21,6 +21,13 @@ public class CoversController : ControllerBase
         _cosmosDbService = cosmosDbService;
     }
 
+    /// <summary>
+    /// Compute and return cover premium for the insurance length and appropertiate cover type
+    /// </summary>
+    /// <param name="startDate">Cover start date</param>
+    /// <param name="endDate">Cover end date</param>
+    /// <param name="coverType">Cover Type</param>
+    /// <returns>Calculated premium</returns>
     [Route("Premium")]
     [HttpPost]
     public async Task<ActionResult> ComputePremiumAsync(DateOnly startDate, DateOnly endDate, CoverType coverType)
@@ -28,12 +35,21 @@ public class CoversController : ControllerBase
         return Ok(_coversService.ComputePremium(startDate, endDate, coverType));
     }
 
+    /// <summary>
+    /// Get whole list of covers
+    /// </summary>
+    /// <returns>List of covers</returns>
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Cover>>> GetAsync()
     {
         return Ok(await _cosmosDbService.GetItemsAsync());
     }
 
+    /// <summary>
+    /// Get cover per id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>Cover</returns>
     [HttpGet("{id}")]
     public async Task<ActionResult<Cover>> GetAsync(string id)
     {
@@ -47,6 +63,11 @@ public class CoversController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Create Cover with the given properties
+    /// </summary>
+    /// <param name="cover"></param>
+    /// <returns></returns>
     [HttpPost]
     public async Task<ActionResult> CreateAsync(Cover cover)
     {
@@ -57,6 +78,11 @@ public class CoversController : ControllerBase
         return Ok(cover);
     }
 
+    /// <summary>
+    /// Delete cover
+    /// </summary>
+    /// <param name="id">Cover id</param>
+    /// <returns></returns>
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteAsync(string id)
     {
